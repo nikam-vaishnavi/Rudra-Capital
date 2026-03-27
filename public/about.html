@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About - Rudra Capital</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <h1>Rudra Capital</h1>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html" class="active">About</a></li>
+                    <li><a href="services.html">Services</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="page-header">
+            <div class="container">
+                <h2>About Rudra Capital</h2>
+                <img src="img/About.jpg" alt="About Us" class="page-image">
+            </div>
+        </section>
+
+        <section class="about-content">
+            <div class="container">
+                <div class="philosophy">
+                    <h3>Our Philosophy</h3>
+                    <p><b>We Are Different</b></p>
+                    <p>You may consider it a bold statement... But this is why we feel so:</p>
+                    <P><b>We do not aim to please everyone</b><br> To serve everyone often dilutes the quality of advice. We choose to work with investors who value discipline and long term thinking.are firm believers in time tested investment principles. The way we recommend and construct portfolios reflects this philosophy - simple, structured, and rooted in fundamentals rather than noise.</br>
+
+<br>Our recommendations are not influenced by glamorous factors such as momentum, short term trends, next best theme or complex strategies. Instead, we focus on enduring parameters like well diversification, minimun overlap, better risk adjusted returns and appropriate asset allocation while selecting mutual funds for our clients.</br>
+
+<br>We operate strictly within our circle of competence and recommend only those products and strategies that we thoroughly understand and believe in. We do not chase every new trend or top performing fund of the moment.</br>
+
+<br>Our approach may not appeal to investors looking for constant action, frequent churn, or quick gains, but we are comfortable with that. Sustainable wealth creation requires patience and discipline, not noise.</br>
+
+After all, one cannot and need not serve everyone.</p>
+                    <p><b>We act as disciplined investment guides</b><br>Our primary objective is to guide and manage our clients’ investments in the most efficient and responsible manner. While growth in AUM is important, it is a byproduct, not the goal.<br/>
+                    <br>Our focus remains on portfolio quality, suitability, and long term outcomes rather than aggressive product promotion. That is why we invest more time in research, portfolio review, and client understanding than in sales driven activities.
+
+Because in the end, trust is built not by gathering assets, but by managing them well.<br/></p>
+                    <p><b>- RUDRA CAPITAL</b>
+                   <br><i>Invest With Understanding</br></i></p>
+                </div>
+
+                <div class="values">
+                    <h3>Our Values</h3>
+                    <div class="values-grid">
+                        <div class="value-item clickable" data-value="trust">
+                            <i class="fas fa-handshake"></i>
+                            <h4>Trust</h4>
+                            <p>We build lasting relationships based on trust and integrity.</p>
+                        </div>
+                        <div class="value-item clickable" data-value="expertise">
+                            <i class="fas fa-chart-pie"></i>
+                            <h4>Expertise</h4>
+                            <p>Our team brings years of experience in financial planning and investment.</p>
+                        </div>
+                        <div class="value-item clickable" data-value="focus">
+                            <i class="fas fa-bullseye"></i>
+                            <h4>Focus</h4>
+                            <p>We focus on your specific financial goals and create tailored solutions.</p>
+                        </div>
+                        <div class="value-item clickable" data-value="security">
+                            <i class="fas fa-shield-alt"></i>
+                            <h4>Security</h4>
+                            <p>Your financial security is our top priority.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+     <footer>
+        <div class="container">
+            <p>&copy; 2026 Rudra Capital</p>
+            <div class="footer-contact">
+                <a href="tel:+91 8208356308"><i class="fas fa-phone"></i>+91 8208356308 </a>
+                <a href="mailto:rudranikam2871@gmail.com"><i class="fas fa-envelope"></i>rudranikam2871@gmail.com</a>
+                <a href="https://instagram.com/rudracapital.invest" target="_blank"><i class="fab fa-instagram"></i> rudracapital.invest</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
+
+    <script>
+        // Value item click handlers
+        const valueItems = document.querySelectorAll('.value-item.clickable');
+        
+        valueItems.forEach(item => {
+            item.addEventListener('click', function() {
+                const value = this.getAttribute('data-value');
+                
+                // Create modal or expanded content
+                showValueDetail(value);
+            });
+        });
+        
+        function showValueDetail(value) {
+            const valueDetails = {
+                'trust': {
+                    title: 'Trust',
+                    content: `
+                        <p>Trust is the foundation of our relationship with clients. We believe in complete transparency in all our dealings and provide honest advice that puts your interests first.</p>
+                        <ul>
+                            <li>Transparent fee structure with no hidden charges</li>
+                            <li>Regular performance reports and updates</li>
+                            <li>Honest assessment of risks and returns</li>
+                            <li>Long-term relationship approach</li>
+                        </ul>
+                    `
+                },
+                'expertise': {
+                    title: 'Expertise',
+                    content: `
+                        <p>Our team consists of certified financial professionals with deep knowledge of various investment instruments and market dynamics.</p>
+                        <ul>
+                            <li>Certified Financial Planners and Investment Advisors</li>
+                            <li>Continuous market research and analysis</li>
+                            <li>Regular training and skill development</li>
+                            <li>Access to global investment research</li>
+                        </ul>
+                    `
+                },
+                'focus': {
+                    title: 'Focus',
+                    content: `
+                        <p>We maintain a sharp focus on your financial goals and create customized strategies that align with your unique situation and aspirations.</p>
+                        <ul>
+                            <li>Personalized financial roadmaps</li>
+                            <li>Goal-based investment planning</li>
+                            <li>Regular progress tracking</li>
+                            <li>Strategy adjustments based on life changes</li>
+                        </ul>
+                    `
+                },
+                'security': {
+                    title: 'Security',
+                    content: `
+                        <p>We prioritize the security of your investments and personal information through robust processes and technology.</p>
+                        <ul>
+                            <li>Partnership with regulated financial institutions</li>
+                            <li>Secure data protection measures</li>
+                            <li>Risk assessment and mitigation strategies</li>
+                            <li>Regular portfolio health checks</li>
+                        </ul>
+                    `
+                }
+            };
+            
+            const detail = valueDetails[value];
+            if (detail) {
+                // Create modal
+                const modal = document.createElement('div');
+                modal.className = 'value-modal';
+                modal.innerHTML = `
+                    <div class="modal-content">
+                        <span class="close-modal">&times;</span>
+                        <h3>${detail.title}</h3>
+                        ${detail.content}
+                    </div>
+                `;
+                
+                document.body.appendChild(modal);
+                document.body.style.overflow = 'hidden';
+                
+                // Close modal handlers
+                const closeModal = modal.querySelector('.close-modal');
+                closeModal.addEventListener('click', function() {
+                    document.body.removeChild(modal);
+                    document.body.style.overflow = 'auto';
+                });
+                
+                modal.addEventListener('click', function(e) {
+                    if (e.target === modal) {
+                        document.body.removeChild(modal);
+                        document.body.style.overflow = 'auto';
+                    }
+                });
+            }
+        }
+    </script>
+</body>
+</html>
