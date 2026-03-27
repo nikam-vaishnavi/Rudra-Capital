@@ -29,6 +29,23 @@ const pool = new Pool({
     }
 });
 
+// Email setup - FIXED VERSION
+let transporter = null;
+
+// Initialize email transporter only when environment variables are available
+if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
+    transporter = nodemailer.createTransporter({
+        service: 'gmail',
+        auth: {
+            user: process.env.EMAIL_USER,
+            pass: process.env.EMAIL_PASS
+        }
+    });
+    console.log('Email transporter initialized');
+} else {
+    console.log('Email environment variables not set - email notifications disabled');
+}
+
 // Create table on startup
 async function initDB() {
     try {
@@ -52,15 +69,6 @@ async function initDB() {
 
 initDB();
 
-// Email setup
-const transporter = nodemailer.createTransporter({
-    service: 'gmail',
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-    }
-});
-
 // API Routes
 app.post('/api/contact', async (req, res) => {
     try {
@@ -72,24 +80,35 @@ app.post('/api/contact', async (req, res) => {
             [name, email, phone, subject, message]
         );
         
-        // Send email notification
-        const mailOptions = {
-            from: process.env.EMAIL_USER,
-            to: process.env.EMAIL_USER,
-            subject: `New Contact: ${subject}`,
-            html: `
-                <h2>New Contact Form Submission</h2>
-                <p><strong>Name:</strong> ${name}</p>
-                <p><strong>Email:</strong> ${email || 'Not provided'}</p>
-                <p><strong>Phone:</strong> ${phone}</p>
-                <p><strong>Subject:</strong> ${subject}</p>
-                <p><strong>Message:</strong> ${message}</p>
-                <p><strong>Date:</strong> ${new Date().toLocaleString()}</p>
-            `
-        };
+        // Send email notification only if transporter is available
+        if (transporter) {
+            try {
+                const mailOptions = {
+                    from: process.env.EMAIL_USER,
+                    to: process.env.EMAIL_USER,
+                    subject: `New Contact: ${subject}`,
+                    html: `
+                        <h2>New Contact Form Submission</h2>
+                        <p><strong>Name:</strong> ${name}</p>
+                        <p><strong>Email:</strong> ${email || 'Not provided'}</p>
+                        <p><strong>Phone:</strong> ${phone}</p>
+                        <p><strong>Subject:</strong> ${subject}</p>
+                        <p><strong>Message:</strong> ${message}</p>
+                        <p><strong>Date:</strong> ${new Date().toLocaleString()}</p>
+                    `
+                };
+                
+                await transporter.sendMail(mailOptions);
+                console.log('Email notification sent');
+            } catch (emailError) {
+                console.error('Email sending failed:', emailError);
+                // Don't fail the request if email fails
+            }
+        } else {
+            console.log('Email not sent - transporter not initialized');
+        }
         
-        transporter.sendMail(mailOptions);
-        console.log('Contact saved and email sent');
+        console.log('Contact saved successfully');
         res.status(201).json({ success: true, data: result.rows[0] });
     } catch (error) {
         console.error('Error saving contact:', error);
@@ -97,22 +116,20 @@ app.post('/api/contact', async (req, res) => {
     }
 });
 
-// Get all contacts (for admin)
 app.get('/api/contacts', async (req, res) => {
     try {
         const result = await pool.query('SELECT * FROM contacts ORDER BY date DESC');
         res.json(result.rows);
     } catch (error) {
+        console.error('Error fetching contacts:', error);
         res.status(500).json({ success: false });
     }
 });
 
-// Simple admin route
 app.get('/admin', (req, res) => {
     res.sendFile(path.join(__dirname, 'admin.html'));
 });
 
-// Serve all pages
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
