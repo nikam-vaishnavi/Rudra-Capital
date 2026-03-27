@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
     <header>
         <div class="container">
@@ -36,8 +37,9 @@
             <div class="container">
                 <div class="contact-info">
                     <h3>Get in Touch</h3>
-                    <p>We're here to help you with your financial planning needs. Reach out to us through any of the following channels:</p>
-                    
+                    <p>We're here to help you with your financial planning needs. Reach out to us through any of the
+                        following channels:</p>
+
                     <div class="contact-methods">
                         <div class="contact-method">
                             <div class="contact-icon">
@@ -65,7 +67,8 @@
                             </div>
                             <div class="contact-details">
                                 <h4>Instagram</h4>
-                                <p><a href="https://instagram.com/rudracapital.invest" target="_blank">@rudracapital.invest</a></p>
+                                <p><a href="https://instagram.com/rudracapital.invest"
+                                        target="_blank">@rudracapital.invest</a></p>
                             </div>
                         </div>
 
@@ -83,22 +86,26 @@
 
                 <div class="contact-form">
                     <h3>Send Us a Message</h3>
+                    
+                    <!-- ADD THIS MESSAGE CONTAINER -->
+                    <div id="formMessage"></div>
+                    
                     <form id="contact-form">
                         <div class="form-group">
                             <label for="name">Your Name *</label>
                             <input type="text" id="name" name="name" required>
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="email">Your Email (Optional)</label>
                             <input type="email" id="email" name="email" placeholder="your.email@example.com">
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="phone">Your Phone *</label>
                             <input type="tel" id="phone" name="phone" required>
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="subject">Subject *</label>
                             <select id="subject" name="subject" required>
@@ -113,9 +120,12 @@
                                 <option value="Other">Other</option>
                             </select>
                         </div>
-                        
-                        
-                        
+
+                        <div class="form-group">
+                            <label for="message">Message *</label>
+                            <textarea id="message" name="message" rows="5" required></textarea>
+                        </div>
+
                         <button type="submit" class="btn">Send Message</button>
                     </form>
                 </div>
@@ -129,31 +139,144 @@
             <div class="footer-contact">
                 <a href="tel:+91 8208356308"><i class="fas fa-phone"></i>+91 8208356308 </a>
                 <a href="mailto:rudranikam2871@gmail.com"><i class="fas fa-envelope"></i>rudranikam2871@gmail.com</a>
-                <a href="https://instagram.com/rudracapital.invest" target="_blank"><i class="fab fa-instagram"></i> rudracapital.invest</a>
+                <a href="https://instagram.com/rudracapital.invest" target="_blank"><i class="fab fa-instagram"></i>
+                    rudracapital.invest</a>
             </div>
         </div>
     </footer>
-</body>
-</html>
 
     <script>
-        // Contact form submission
-        document.getElementById('contact-form').addEventListener('submit', function(e) {
+        // Enhanced contact form submission with backend integration
+        document.getElementById('contact-form').addEventListener('submit', async function (e) {
             e.preventDefault();
-            
-            // Get form values
-            const name = document.getElementById('name').value;
-            const email = document.getElementById('email').value;
-            const phone = document.getElementById('phone').value;
-            const subject = document.getElementById('subject').value;
-            const message = document.getElementById('message').value;
-            
-            // Here you would normally send the form data to a server
-            // For this example, we'll just show an alert
-            alert(`Thank you, ${name}! Your message regarding ${subject} has been sent. We'll get back to you soon.`);
-            
-            // Reset the form
-            this.reset();
+
+            // Get form elements
+            const submitBtn = document.getElementById('submitBtn');
+            const formMessage = document.getElementById('formMessage');
+            const originalBtnText = submitBtn.textContent;
+
+            // Disable button and show loading
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Sending...';
+            submitBtn.style.backgroundColor = '#6c757d';
+            submitBtn.style.cursor = 'not-allowed';
+
+            // Get form data
+            const formData = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                subject: document.getElementById('subject').value,
+                message: document.getElementById('message').value
+            };
+
+            // Validate required fields
+            if (!formData.name || !formData.phone || !formData.subject || !formData.message) {
+                showFormMessage('❌ Please fill in all required fields.', 'error');
+                resetButton();
+                return;
+            }
+
+            try {
+                // Send to backend
+                const response = await fetch('/api/contact', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // SUCCESS - Show success message
+                    showFormMessage('✅ Thank you, ' + formData.name + '! Your message has been sent successfully. We will contact you soon.', 'success');
+
+                    // Reset form
+                    this.reset();
+
+                    // Optional: Show success animation
+                    document.querySelector('.contact-form').classList.add('success');
+                    setTimeout(() => {
+                        document.querySelector('.contact-form').classList.remove('success');
+                    }, 2000);
+
+                } else {
+                    // ERROR - Show error message
+                    showFormMessage('❌ ' + (data.message || 'Error sending message. Please try again.'), 'error');
+                }
+
+            } catch (error) {
+                // NETWORK ERROR - Show error message
+                showFormMessage('❌ Network error. Please check your connection and try again.', 'error');
+                console.error('Form submission error:', error);
+            } finally {
+                // Re-enable button
+                resetButton();
+            }
+        });
+
+        // Helper functions
+        function showFormMessage(message, type) {
+            const formMessage = document.getElementById('formMessage');
+
+            // Create message element
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `form-message ${type}`;
+            messageDiv.innerHTML = message;
+
+            // Add animation
+            messageDiv.style.opacity = '0';
+            messageDiv.style.transform = 'translateY(-10px)';
+
+            // Clear previous messages
+            formMessage.innerHTML = '';
+            formMessage.appendChild(messageDiv);
+
+            // Animate in
+            setTimeout(() => {
+                messageDiv.style.transition = 'all 0.3s ease';
+                messageDiv.style.opacity = '1';
+                messageDiv.style.transform = 'translateY(0)';
+            }, 10);
+
+            // Auto-hide after 5 seconds
+            setTimeout(() => {
+                messageDiv.style.opacity = '0';
+                messageDiv.style.transform = 'translateY(-10px)';
+                setTimeout(() => {
+                    if (formMessage.contains(messageDiv)) {
+                        formMessage.removeChild(messageDiv);
+                    }
+                }, 300);
+            }, 5000);
+        }
+
+        function resetButton() {
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = false;
+            submitBtn.textContent = 'Send Message';
+            submitBtn.style.backgroundColor = '#1a3a5f';
+            submitBtn.style.cursor = 'pointer';
+        }
+
+        // Add form validation
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('contact-form');
+            const inputs = form.querySelectorAll('input, textarea, select');
+
+            inputs.forEach(input => {
+                input.addEventListener('blur', function () {
+                    if (this.value.trim() === '') {
+                        this.classList.remove('valid');
+                        this.classList.remove('error');
+                    } else {
+                        this.classList.add('valid');
+                        this.classList.remove('error');
+                    }
+                });
+            });
         });
     </script>
 </body>
