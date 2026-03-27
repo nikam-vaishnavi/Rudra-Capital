@@ -75,27 +75,62 @@ async function initDB() {
 initDB();
 
 // Test route
-app.get('/test', (req, res) => {
+/*app.get('/test', (req, res) => {
     res.json({ 
         message: 'Server is working!', 
         timestamp: new Date().toISOString(),
         environment: process.env.NODE_ENV || 'development'
     });
-});
+});*/
+// Add this test route to your server.js
+app.get('/test-email', async (req, res) => {
+    try {
+        // Test if environment variables are set
+        console.log('EMAIL_USER:', process.env.EMAIL_USER);
+        console.log('EMAIL_PASS exists:', !!process.env.EMAIL_PASS);
+        console.log('EMAIL_PASS length:', process.env.EMAIL_PASS ? process.env.EMAIL_PASS.length : 0);
 
+        // Test email transporter
+        if (transporter) {
+            console.log('Email transporter initialized: ✅');
+
+            // Send test email
+            const testMailOptions = {
+                from: process.env.EMAIL_USER,
+                to: process.env.EMAIL_USER,
+                subject: '📧 Test Email from Rudra Capital',
+                html: `
+                    <h2>Test Email</h2>
+                    <p>This is a test email to verify email notifications are working.</p>
+                    <p>Time: ${new Date().toLocaleString()}</p>
+                `
+            };
+
+            await transporter.sendMail(testMailOptions);
+            console.log('Test email sent: ✅');
+            res.json({ success: true, message: 'Test email sent successfully!' });
+        } else {
+            console.log('Email transporter not initialized: ❌');
+            res.json({ success: false, message: 'Email transporter not initialized' });
+        }
+    } catch (error) {
+        console.error('Test email error:', error);
+        res.json({ success: false, message: 'Test email failed: ' + error.message });
+    }
+});
 // === ENHANCED: Contact API Route ===
 app.post('/api/contact', async (req, res) => {
     try {
         const { name, email, phone, subject, message } = req.body;
-        
+
         // === NEW: Save to Database ===
         const result = await pool.query(
             'INSERT INTO contacts (name, email, phone, subject, message) VALUES ($1, $2, $3, $4, $5) RETURNING *',
             [name, email, phone, subject, message]
         );
-        
+
         console.log('✅ Contact saved to database');
-        
+
         // === NEW: Send Email Notification ===
         if (transporter) {
             try {
@@ -119,7 +154,7 @@ app.post('/api/contact', async (req, res) => {
                         </div>
                     `
                 };
-                
+
                 await transporter.sendMail(mailOptions);
                 console.log('✅ Email notification sent');
             } catch (emailError) {
@@ -127,17 +162,17 @@ app.post('/api/contact', async (req, res) => {
                 // Don't fail the request if email fails
             }
         }
-        
-        res.status(201).json({ 
-            success: true, 
+
+        res.status(201).json({
+            success: true,
             message: 'Contact form submitted successfully',
-            data: result.rows[0] 
+            data: result.rows[0]
         });
     } catch (error) {
         console.error('❌ Error saving contact:', error.message);
-        res.status(500).json({ 
-            success: false, 
-            message: 'Error saving contact. Please try again.' 
+        res.status(500).json({
+            success: false,
+            message: 'Error saving contact. Please try again.'
         });
     }
 });
